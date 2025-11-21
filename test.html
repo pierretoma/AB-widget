@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Widget Comparaison Esthétique</title>
+    
+    <style>
+        /* CSS: Style Esthétique (Adapté à l'exemple Noir/Or) */
+        body {
+            /* ... (styles de body, container, etc., de l'Étape 2) ... */
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: transparent; 
+            margin: 0;
+            padding: 0;
+        }
+        .widget-container {
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            padding: 10px;
+        }
+        #audioContainer {
+            min-height: 40px; /* Espace pour le lecteur audio */
+            margin-bottom: 10px;
+        }
+        #toggleButton {
+            background-color: #000000; 
+            color: #FFD700; 
+            border: 2px solid #FFD700;
+            padding: 12px 25px;
+            border-radius: 25px; 
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        #statusText {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="widget-container">
+    <div id="audioContainer">
+        </div>
+    
+    <button id="toggleButton">Comparer (Mixé)</button>
+    <p id="statusText">Statut : Chargement...</p>
+</div>
+
+<script>
+    // JavaScript: Logique de Bascule (Arrêt/Redémarrage)
+    
+    const params = new URLSearchParams(window.location.search);
+    const UNMIXED_URL = params.get('unmixed');
+    const MIXED_URL = params.get('mixed');
+
+    const audioContainer = document.getElementById('audioContainer');
+    const toggleButton = document.getElementById('toggleButton');
+    const statusText = document.getElementById('statusText');
+
+    let isMixed = false; 
+
+    // Fonction pour insérer le lecteur audio dans le conteneur
+    function loadAudioPlayer(url) {
+        audioContainer.innerHTML = `<audio controls src="${url}" style="width:100%;"></audio>`;
+    }
+
+    // Fonction de bascule
+    function toggleAudio() {
+        isMixed = !isMixed;
+        
+        // Mettre en pause et recharger l'autre piste
+        if (isMixed) {
+            loadAudioPlayer(MIXED_URL);
+            statusText.textContent = "Statut : MIXÉ";
+            toggleButton.textContent = "Comparer (Non Mixé)";
+        } else {
+            loadAudioPlayer(UNMIXED_URL);
+            statusText.textContent = "Statut : NON MIXÉ";
+            toggleButton.textContent = "Comparer (Mixé)";
+        }
+        
+        // Note: L'utilisateur devra cliquer sur PLAY après la bascule.
+    }
+
+    // Initialisation
+    if (UNMIXED_URL && MIXED_URL) {
+        loadAudioPlayer(UNMIXED_URL);
+        statusText.textContent = "Statut : NON MIXÉ";
+        toggleButton.addEventListener('click', toggleAudio);
+    } else {
+        statusText.textContent = "Erreur: URLs manquantes. Vérifiez l'intégration.";
+        toggleButton.disabled = true;
+    }
+</script>
+</body>
+</html>
